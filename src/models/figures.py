@@ -2,11 +2,12 @@ import numpy as np
 
 
 class Figure:
-    def __init__(self, matrix_figure: np.ndarray):
+    def __init__(self, type_name: str, matrix_figure: np.ndarray):
         self.matrix_figure = matrix_figure
+        self.type_name = type_name
 
     def _to_binary(self, matrix: np.ndarray):
-        """Convierte la matriz de la figura a una matriz binaria."""
+        """Convierte la matriz a una matriz binaria."""
         return np.where(matrix != None, 1, 0)
 
     def get_all_rotations(self):
@@ -16,47 +17,54 @@ class Figure:
             rotated_matrix = np.rot90(self.matrix_figure, k=k)
             rotations.append(rotated_matrix)
         return rotations
-    
-    def matches_any_rotation(self, matrix: np.ndarray):
-        """Verifica si la matriz coincide con alguna rotación de la figura."""
-        bin_matrix = self._to_binary(matrix)
+
+    def matches_any_rotation(self, connected_component: np.ndarray):
+        """Verifica si la matriz coincide con alguna rotación de la figura.
+        Se abstrae del color de la componente conexa"""
+
+        bin_connected_component = self._to_binary(connected_component)
 
         for rotation in self.get_all_rotations():
-            if np.array_equal(self._to_binary(rotation), bin_matrix):
+            if np.array_equal(self._to_binary(rotation), bin_connected_component):
                 return True
         return False
 
 
 class Cube(Figure):
     def __init__(self):
+        type_name = "Cube"
         matrix_figure = np.array(
             [
                 ["*", "*"],
                 ["*", "*"],
             ]
         )
-        super().__init__(matrix_figure)
+        super().__init__(type_name, matrix_figure)
 
 
 class Zeta(Figure):
     def __init__(self):
+        type_name = "Zeta"
         matrix_figure = np.array(
             [
                 [None, "*", "*"],
                 ["*", "*", None],
             ]
         )
-        super().__init__(matrix_figure)
+        super().__init__(type_name, matrix_figure)
+
 
 class ShortT(Figure):
     def __init__(self):
+        type_name = "Short T"
         matrix_figure = np.array(
             [
                 [None, "*", None],
                 ["*", "*", "*"],
             ]
         )
-        super().__init__(matrix_figure)
+        super().__init__(type_name, matrix_figure)
+
 
 def get_all_figures():
     return [Cube(), Zeta(), ShortT()]
