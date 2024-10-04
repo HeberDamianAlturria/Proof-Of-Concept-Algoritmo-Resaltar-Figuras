@@ -1,7 +1,25 @@
 import numpy as np
 from typer import colors, style, echo
 
-def print_components(components_map: dict, board_shape: tuple):
+def convert_to_dict(components: list) -> dict:
+    """Convierte una lista de componentes a un diccionario con los colores como llave."""
+    components_dict = {}
+    for component in components:
+        color = components[0][0]
+
+        for i, j in np.ndindex(component.shape):
+          if component[i, j] is not None:
+              color, _, _ = component[i, j]  # primer elemento no None
+              break
+
+        if color not in components_dict:
+            components_dict[color] = []
+
+        components_dict[color].append(component)
+    return components_dict
+  
+def print_components(components: list, board_shape: tuple):
+    components_map = convert_to_dict(components)
     rows, cols = board_shape
     for color, components in components_map.items():
         # Colorear el nombre del color y el número de componentes

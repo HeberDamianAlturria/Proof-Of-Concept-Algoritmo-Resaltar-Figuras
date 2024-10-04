@@ -9,8 +9,8 @@ app = typer.Typer()
 @app.command()
 def show_connected_components(board_path: Path):
     parsed_board = parse_board(board_path)
-    connected_componetes = find_all_color_components(parsed_board)
-    print_components(connected_componetes, parsed_board.shape)
+    all_connected_components = find_all_color_components(parsed_board)    
+    print_components(all_connected_components, parsed_board.shape)
 
 @app.command()
 def show_figures(board_path: Path):

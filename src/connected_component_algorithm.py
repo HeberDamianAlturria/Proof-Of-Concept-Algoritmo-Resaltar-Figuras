@@ -64,17 +64,12 @@ def find_connected_components(filtered_board: np.ndarray, color: str) -> list:
 
     return components
 
-def find_all_color_components(board: np.ndarray):
-    color_to_components_map = {
-        "r": [],
-        "g": [],
-        "b": [],
-        "y": [],
-    }
+def find_all_color_components(board: np.ndarray) -> list:
+    all_connected_components = []
 
     for color in ["r", "g", "b", "y"]:
         filtered_board = filter_board_by_color(board, color)
         components = find_connected_components(filtered_board, color)
-        color_to_components_map[color] = components
+        all_connected_components.extend(components)  # Agregar todas las componentes a una lista
     
-    return color_to_components_map
+    return all_connected_components

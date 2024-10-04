@@ -130,7 +130,7 @@ Nosotros queremos encontrar las figuras que tengamos definidas dentro del `board
 
 ## Objetivo de este algoritmo:
 
-El objetivo de este algoritmo es en base al `board`, obtener para `cada color` las componentes conexas que están presentes en dicho board. Es decir que toma como argumento un board y retornará un diccionario donde la key será un color y el value será un arreglo de las componentes conexas asociadas a ese color. Por una cuestión de simpleza, las componentes conexas será una submatriz del board, compuesta de 3-uplas que tendrán primero el color, luego el row en el board y luego el column en el board que tiene la pieza.
+El objetivo de este algoritmo es en base al `board`, obtener para `cada color` las componentes conexas que están presentes en dicho board. Es decir que toma como argumento un board y retornará un arreglo de las componentes conexas. Por una cuestión de simpleza, las componentes conexas será una submatriz del board, compuesta de 3-uplas que tendrán primero el color, luego el row en el board y luego el column en el board que tiene la pieza.
 
 Por ejemplo, si tengo el siguiente board:
 
@@ -146,67 +146,54 @@ r y y y y b
 Entonces, esperaría que mi algoritmo devuelva algo como:
 
 ```
-{
-  r: [
-    [
-      [('r', 0, 0), ('r', 0, 1)], 
-      [('r', 1, 0), ('r', 1, 1)]
-    ],
-    [[('r', 0, 5)]],
-    [
-      [('r', 4, 0)], 
-      [('r', 5, 0)]
-    ],
-    [[('r', 4, 4), ('r', 4, 5)]],
+[
+  [
+    [('r', 0, 0), ('r', 0, 1)], 
+    [('r', 1, 0), ('r', 1, 1)]
   ],
-  g: [
-    [[('g', 0, 3)]],
-    [[('g', 1, 2)]],
-    [
-      [('g', 3, 0), ('g', 3, 1), ('g', 3, 2), ('g', 3, 3), ('g', 3, 4)],
-      [None, ('g', 4, 1), None, ('g', 4, 3), None]
-    ],
+  [[('r', 0, 5)]],
+  [
+    [('r', 4, 0)], 
+    [('r', 5, 0)]
   ],
-  b: [
-    [
-      [('b', 2, 0), ('b', 2, 1), ('b', 2, 2), ('b', 2, 3), ('b', 2, 4), ('b', 2, 5)],
-      [None, None, None, None, None, ('b', 3, 5)]
-    ],
-    [[('b', 4, 2)]],
-    [[('b', 5, 5)]],
+  [[('r', 4, 4), ('r', 4, 5)]],
+  [[('g', 0, 3)]],
+  [[('g', 1, 2)]],
+  [
+    [('g', 3, 0), ('g', 3, 1), ('g', 3, 2), ('g', 3, 3), ('g', 3, 4)],
+    [None, ('g', 4, 1), None, ('g', 4, 3), None]
   ],
-  y: [
-    [[('y', 0, 2)]],
-    [
-      [None, ('y', 0, 4), None],
-      [('y', 1, 3), ('y', 1, 4), ('y', 1, 5)]
-    ],
-    [[('y', 5, 1), ('y', 5, 2), ('y', 5, 3), ('y', 5, 4)]]
+  [
+    [('b', 2, 0), ('b', 2, 1), ('b', 2, 2), ('b', 2, 3), ('b', 2, 4), ('b', 2, 5)],
+    [None, None, None, None, None, ('b', 3, 5)]
   ],
-}
+  [[('b', 4, 2)]],
+  [[('b', 5, 5)]],
+  [[('y', 0, 2)]],
+  [
+    [None, ('y', 0, 4), None],
+    [('y', 1, 3), ('y', 1, 4), ('y', 1, 5)]
+  ],
+  [[('y', 5, 1), ('y', 5, 2), ('y', 5, 3), ('y', 5, 4)]],
+]
 ```
 
 ## Explicación del algoritmo:
 
 A continuación explicaré las partes del algoritmo destinadas a obtener las componentes conexas de todos los colores:
 
-1. La función `find_all_color_components`. Esta función toma como argumento el board y va a retornar el diccionario de componentes conexas. Se define de la siguiente forma:
+1. La función `find_all_color_components`. Esta función toma como argumento el board y va a retornar un arreglo de componentes conexas. Se define de la siguiente forma:
 
     ```python
-    def find_all_color_components(board: np.ndarray):
-        color_to_components_map = {
-            "r": [],
-            "g": [],
-            "b": [],
-            "y": [],
-        }
+    def find_all_color_components(board: np.ndarray) -> list:
+        all_connected_components = []
 
         for color in ["r", "g", "b", "y"]:
             filtered_board = filter_board_by_color(board, color)
             components = find_connected_components(filtered_board, color)
-            color_to_components_map[color] = components
+            all_connected_components.extend(components)  # Agregar todas las componentes a una lista
         
-        return color_to_components_map
+        return all_connected_components
     ```
 
     Notemos que por cada color vamos a realizar los pasos de filtrar el board por colores, y luego buscaremos sus componentes conexas.
