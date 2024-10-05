@@ -1,3 +1,7 @@
+# ¿Por qué esta prueba de conceptos existe?
+
+La idea de esta prueba de conceptos es entender como sería la idea para poder implementar el algoritmo de resaltar figuras del juego `El Switcher`. Si bien, luego se tendrá que ver como adaptar el código a las necesidades del backend, las ideas del algoritmo son lo importante de esta prueba de conceptos.
+
 # El CLI.
 
 Para poder entender de manera más visual los algoritmos que vamos a utilizar para resolver el problema, hay distintos comandos que se encargan de representar los resultados del algoritmo de una manera amigable.
@@ -550,4 +554,4 @@ A grandes rasgos, esto es lo que haría el algoritmo.
 
 Ya hemos mencionado los algoritmos más importantes que inspiraron esta prueba de conceptos y los que vamos a poder utilizar para resolver nuestro problema. Los demás elementos de código de esta prueba son para representar visualmente los ejemplos y poder demostrar los resultados obtenidos con estos algoritmos de una manera cómoda.
 
-En nuestro proyecto tendremos que ver como adaptar estos algoritmos para que nos sean funcionales, pero las ideas deberían ser las mismas.
+En nuestro proyecto tendremos que ver como adaptar estos algoritmos para que nos sean funcionales según las necesidades del backend, pero las ideas deberían ser las mismas.
