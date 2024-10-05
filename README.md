@@ -130,7 +130,7 @@ Nosotros queremos encontrar las figuras que tengamos definidas dentro del `board
 
 ## Objetivo de este algoritmo:
 
-El objetivo de este algoritmo es en base al `board`, obtener para `cada color` las componentes conexas que están presentes en dicho board. Es decir que toma como argumento un board y retornará un arreglo de las componentes conexas. Por una cuestión de simpleza, las componentes conexas será una submatriz del board, compuesta de 3-uplas que tendrán primero el color, luego el row en el board y luego el column en el board que tiene la pieza.
+El objetivo de este algoritmo es en base al `board`, obtener para `cada color` las componentes conexas que están presentes en dicho board. Es decir que toma como argumento un board y retornará un arreglo de las componentes conexas. Por una cuestión de simpleza, las componentes conexas será una submatriz del board, compuesta de 3-uplas que tendrán primero el color, luego el row en el board y luego el column en el board que tiene la pieza. Obviamente, cada componente conexa solamente estará representada por elementos de un mismo color.
 
 Por ejemplo, si tengo el siguiente board:
 
@@ -177,6 +177,17 @@ Entonces, esperaría que mi algoritmo devuelva algo como:
   [[('y', 5, 1), ('y', 5, 2), ('y', 5, 3), ('y', 5, 4)]],
 ]
 ```
+
+## Idea básica del algoritmo.
+
+Vamos a tomar como arguemento el board y vamos a hacer lo siguiente:
+
+1. Creamos una lista vacía donde guardaremos nuestras componentes conexas.
+2. Por cada color existente en el board, vamos a:
+    1. Filtrar el board por ese color.
+    2. Vamos a iterar el board ya filtado por el color y vamos a ir aplicando `DFS` para obtener sus componentes conexas, las cuales guardaremos en la lista de componentes conexas.
+
+A grandes rasgos, eso es lo que hará nuestro algoritmo.
 
 ## Explicación del algoritmo:
 
@@ -280,4 +291,224 @@ A continuación explicaré las partes del algoritmo destinadas a obtener las com
 
     Notemos que este algoritmo lo que hará será iterar el algoritmo clásico de DFS, pero orientado a matrices, pero con la principal diferencia de que va a guardar los mayores y menores valores de `row` y `column`, para poder crear la submatriz luego.
 
-# Algoritmo para obtener las componentes conexas.
+# Algoritmo para obtener la componentes conexas que son figuras válidas.
+
+## Objetivo de este algoritmo.
+
+El objetivo de este algoritmo es obtener un diccionario de figuras, donde el key será el nombre de la figura y el value será un arreglo de componentes conexas que satisfacen la forma que tiene la figura. 
+
+A continuación veremos un ejemplo sencillo:
+
+
+Por ejemplo, si tengo el siguiente board:
+
+```
+r r y g y r
+r r g y y y
+b b b b b b
+g g g g g b
+r g b g r r
+r y y y y b
+```
+
+Entonces, la lista de componentes conexas sería:
+
+```
+[
+  [
+    [('r', 0, 0), ('r', 0, 1)], 
+    [('r', 1, 0), ('r', 1, 1)]
+  ],
+  [[('r', 0, 5)]],
+  [
+    [('r', 4, 0)], 
+    [('r', 5, 0)]
+  ],
+  [[('r', 4, 4), ('r', 4, 5)]],
+  [[('g', 0, 3)]],
+  [[('g', 1, 2)]],
+  [
+    [('g', 3, 0), ('g', 3, 1), ('g', 3, 2), ('g', 3, 3), ('g', 3, 4)],
+    [None, ('g', 4, 1), None, ('g', 4, 3), None]
+  ],
+  [
+    [('b', 2, 0), ('b', 2, 1), ('b', 2, 2), ('b', 2, 3), ('b', 2, 4), ('b', 2, 5)],
+    [None, None, None, None, None, ('b', 3, 5)]
+  ],
+  [[('b', 4, 2)]],
+  [[('b', 5, 5)]],
+  [[('y', 0, 2)]],
+  [
+    [None, ('y', 0, 4), None],
+    [('y', 1, 3), ('y', 1, 4), ('y', 1, 5)]
+  ],
+  [[('y', 5, 1), ('y', 5, 2), ('y', 5, 3), ('y', 5, 4)]],
+]
+```
+
+Y si tengo definido como figuras las siguientes:
+
+- Un `Cube` de la forma:
+
+    ```
+    [
+      ["*", "*"],
+      ["*", "*"],
+    ]
+    ```
+
+- Un `Zeta` de la forma:
+
+    ```
+    [
+      [None, "*", "*"],
+      ["*", "*", None],
+    ]
+    ```
+
+- Un `Short T` de la forma:
+
+    ```
+    [
+      [None, "*", None],
+      ["*", "*", "*"],
+    ]
+    ```
+
+Entonces, esperaría que mi algoritmo en este caso devolviera algo como:
+
+```
+{
+  "Cube": [
+    [
+      [('r', 0, 0), ('r', 0, 1)],
+      [('r', 1, 0), ('r', 1, 1)]
+    ],
+  ],
+  "Short T": [
+    [
+      [None, ('y', 0, 4), None],
+      [('y', 1, 3), ('y', 1, 4), ('y', 1, 5)]
+    ],
+  ],
+}
+```
+
+Es decir que solamente se queda con las componentes conexas que forman una figura válida.
+
+## Idea del algoritmo.
+
+A continuación explicaré las ideas del algoritmo:
+
+1. Creo un diccionario para almacenar los tipo de figuras como key y como value un arreglo de componentes conexas para ese tipo de figura.
+2. Obtenemos todas las componentes conexas que tenga nuestro board.
+3. Por cada componente conexa, vamos a iterar el arreglo de figuras que tengo y voy a hacer lo siguiente:
+    1. Si se cumple que la componente conexa es igual a la figura en alguna de sus posibles rotaciones, entonces para el tipo de esta figura lo agrego a su arreglo correspondiente.
+
+A grandes rasgos, esto es lo que haría el algoritmo.
+
+## Explicación del algoritmo:
+
+1. La definición de las figuras se hará de la siguiente manera:
+
+    ```python
+    import numpy as np
+
+
+    class Figure:
+        def __init__(self, type_name: str, matrix_figure: np.ndarray):
+            self.matrix_figure = matrix_figure
+            self.type_name = type_name
+
+        def _to_binary(self, matrix: np.ndarray):
+            """Convierte la matriz a una matriz binaria."""
+            return np.where(matrix != None, 1, 0)
+
+        def get_all_rotations(self):
+            """Devuelve todas las rotaciones posibles de la figura (normal, 90°, 180°, 270°)."""
+            rotations = [self.matrix_figure]  # Incluye la matriz original
+            for k in range(1, 4):  # Rotar 90°, 180°, 270°
+                rotated_matrix = np.rot90(self.matrix_figure, k=k)
+                rotations.append(rotated_matrix)
+            return rotations
+
+        def matches_any_rotation(self, connected_component: np.ndarray):
+            """Verifica si la matriz coincide con alguna rotación de la figura.
+            Se abstrae del color de la componente conexa"""
+
+            bin_connected_component = self._to_binary(connected_component)
+
+            for rotation in self.get_all_rotations():
+                if np.array_equal(self._to_binary(rotation), bin_connected_component):
+                    return True
+            return False
+
+
+    class Cube(Figure):
+        def __init__(self):
+            type_name = "Cube"
+            matrix_figure = np.array(
+                [
+                    ["*", "*"],
+                    ["*", "*"],
+                ]
+            )
+            super().__init__(type_name, matrix_figure)
+
+
+    class Zeta(Figure):
+        def __init__(self):
+            type_name = "Zeta"
+            matrix_figure = np.array(
+                [
+                    [None, "*", "*"],
+                    ["*", "*", None],
+                ]
+            )
+            super().__init__(type_name, matrix_figure)
+
+
+    class ShortT(Figure):
+        def __init__(self):
+            type_name = "Short T"
+            matrix_figure = np.array(
+                [
+                    [None, "*", None],
+                    ["*", "*", "*"],
+                ]
+            )
+            super().__init__(type_name, matrix_figure)
+
+
+    def get_all_figures():
+        return [Cube(), Zeta(), ShortT()]
+    ```
+
+    Notemos que la clase `Figure` es la clase padre, ya que contiene métodos que los hijos van a necesitar. En cambio, las clases hijas solamente definen las figuras que vamos a aceptar.
+
+    Notese también que el método `matches_any_rotation` toma como argumento una componente conexa, sin embargo el color NO va a importar, sino que nos vamos a abstraer del color y vamos a comprobar la forma. Es por eso que vamos a convertir a matrices binarias tanto la figura como la componente conexa con el objetivo de comparar cómodamente.
+
+2. La función `extract_figures_from_board`. Esta es la que finalmente se encarga de ver qué figuras del board son válidas y retornar un diccionario de las figuras agrupadas por tipo. Se define cómo:
+
+    ```python
+    def extract_figures_from_board(board: np.ndarray) -> dict:
+        """Encuentra todas las figuras en el tablero y retorna un diccionario de figuras agrupadas por tipo."""
+        all_connected_components = find_all_color_components(board)
+
+        figures_by_type = defaultdict(list)
+
+        for component in all_connected_components:
+            for figure in get_all_figures():
+                if figure.matches_any_rotation(component):
+                    figures_by_type[figure.type_name].append(component)
+
+        return figures_by_type
+    ```
+
+    Notemos que este algoritmo lo que hará será utilizar la función `find_all_color_components` que definimos previamente y que nos dará la lista de todas las componentes conexas que hay en el board. Y notemos que por cada componente conexa, vemos si se parece a alguna de las figuras que hemos definido.
+
+# El código de esta prueba de conceptos.
+
+Ya hemos mencionado los algoritmos más importantes que inspiraron esta prueba de conceptos y los que vamos a poder utilizar para resolver nuestro problema. Los demás elementos de código de esta prueba son para representar visualmente los ejemplos y poder demostrar los resultados obtenidos con estos algoritmos de una manera cómoda.
+
+En nuestro proyecto tendremos que ver como adaptar estos algoritmos para que nos sean funcionales, pero las ideas deberían ser las mismas.
