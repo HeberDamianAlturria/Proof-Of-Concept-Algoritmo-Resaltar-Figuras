@@ -3,4 +3,4 @@ g r r y y y
 b b b g b b
 y y g g g b
 r r g r r r
-b y y y g b
+b y y y b b

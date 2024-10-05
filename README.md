@@ -1,4 +1,43 @@
-# Entendiendo el problema:
+# El CLI.
+
+Para poder entender de manera más visual los algoritmos que vamos a utilizar para resolver el problema, hay distintos comandos que se encargan de representar los resultados del algoritmo de una manera amigable.
+
+## Los boards.
+
+Los boards tendrán que se un archivo que definirá cada color con `r para red`, `g para green`, `y para yellow` y `b para blue`, y donde el board tendrá que ser de 6 filas y 6 columnas, y donde cada color debe aparecer 9 veces. Un ejemplo de board válido sería:
+
+```
+g g r r y g
+g r r b y y
+b b b g y b
+y y g g g b
+r r y r r r
+b y g y b b
+```
+
+## Comandos.
+
+A continuación explicaré los comandos que tiene este CLI:
+
+- `connected-components`: Este comando se encarga de mostar para cada color las componentes conexas que tiene en el board. Dicho comando deberá tener pasado un path hacia un archivo txt de un board. A continuación veremos un ejemplo de como usarlo:
+
+    ```bash
+    python .\src\main.py connected-components .\boards\example_1.txt
+    ```
+
+- `show-figures`: Este comando se encarga de mostrar todas las figuras enconcantradas en el board. Más específicamente, lo que hará será separar cada componente conexa con el tipo de figura con la que matchea y lo representará de una manera cómoda. A continuación veremos un ejemplo de como utilizarlo:
+
+    ```bash
+    python .\src\main.py show-figures .\boards\example_1.txt
+    ```
+
+- `highlight-board`: Este comando se encarga de resaltar en el board todas las figuras encontradas que son válidas y que nosotros hemos definido. A continuación veremos un ejemplo de como utilizarlo:
+
+    ```bash
+    python .\src\main.py highlight-board .\boards\example_1.txt
+    ```
+
+# Entendiendo el problema a resolver.
 
 Notemos que tenemos un board, al cuál podemos representar de la siguiente manera:
 
@@ -143,7 +182,7 @@ r g b g r r
 r y y y y b
 ```
 
-Entonces, esperaría que mi algoritmo devuelva algo como:
+Entonces, esperaríamos que el algoritmo devuelva algo como:
 
 ```
 [
@@ -218,7 +257,7 @@ A continuación explicaré las partes del algoritmo destinadas a obtener las com
 
     Notemos que vamos a dejar en el board solamente los elementos que sean del `color`, pero los que NO los reemplazaremos por `None`.
 
-3. La función `find_connected_components`. El objetivo de esta función es 
+3. La función `find_connected_components`. El objetivo de esta función es ir aplicando sucesivamente el algoritmo `DFS` para obtener todas las componentes conexas del board filtrado por color. Se define como:
 
     ```python
     def find_connected_components(filtered_board: np.ndarray, color: str) -> list:
@@ -237,9 +276,9 @@ A continuación explicaré las partes del algoritmo destinadas a obtener las com
         return components
     ```
 
-    Notemos que esto lo que hará será iterar sobre el board ya filtrado (es decir que tiene un solor color). Y lo que haremos será obtener las componentes conexas de cada parte, por más que hayan partes que estén separadas. Retornaremos un arreglo de cada componente conexa.
+    Notemos que esto lo que hará será iterar sobre el board ya filtrado (es decir que tiene un solo color). Y lo que haremos será obtener las componentes conexas de cada parte, por más que hayan partes que estén separadas. Retornaremos un arreglo de cada componente conexa.
 
-4. La función `depth_first_search`. Esta es la función más importante, ya que nos permitirá obtener una submatriz de 3-uplas que me permitirá definir la componente conexa.
+4. La función `depth_first_search`. Esta es la función más importante, ya que nos permitirá obtener una submatriz de 3-uplas que me permitirá definir la componente conexa. El código sería:
 
     ```python
     def depth_first_search(filtered_board: np.ndarray, visited: np.ndarray, row: int, col: int, color: str):

@@ -9,19 +9,19 @@ from figures_algorithm import extract_figures_from_board
 
 app = typer.Typer()
 
-@app.command(name="connected-components", help="Mustra las componentes conexas del tablero")
+@app.command(name="connected-components", help="Mustra las componentes conexas del board")
 def show_connected_components(board_path: Path):
     parsed_board = parse_board(board_path)
     all_connected_components = find_all_color_components(parsed_board)    
     print_components(all_connected_components, parsed_board.shape)
 
-@app.command(name="show-figures", help="Muestra las figuras encontradas en el tablero")
+@app.command(name="show-figures", help="Muestra las figuras encontradas en el board")
 def show_figures(board_path: Path):
     parsed_board = parse_board(board_path)
     figures_map = extract_figures_from_board(parsed_board)
     print_figures_map(figures_map, parsed_board.shape)
 
-@app.command(name="highlight-board", help="Resalta en el tablero las figuras encontradas")
+@app.command(name="highlight-board", help="Resalta en el board las figuras encontradas")
 def highlight_figures_in_board(board_path: Path):
     parsed_board = parse_board(board_path)
     figures_map = extract_figures_from_board(parsed_board)

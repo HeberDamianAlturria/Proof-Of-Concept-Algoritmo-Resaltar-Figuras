@@ -1,6 +1,13 @@
 import numpy as np
 from typer import colors, style, echo
 
+CELL_COLORS = {
+    'R': colors.RED,
+    'G': colors.GREEN,
+    'B': colors.BLUE,
+    'Y': colors.YELLOW
+}
+
 def print_highlighted_board(board: np.ndarray, figures_map: dict):
     """Imprime el tablero con las figuras resaltadas."""
     # Resaltar en mayúsculas las celdas que pertenecen a figuras válidas
@@ -15,7 +22,7 @@ def print_highlighted_board(board: np.ndarray, figures_map: dict):
     # Imprimir el tablero con las figuras resaltadas
     for row in board:
         formatted_row = '  '.join(
-            [style(str(cell), fg=colors.GREEN) if cell is not None else style('.', fg=colors.RED) for cell in row]
+            [style(str(cell), fg=CELL_COLORS.get(cell, colors.WHITE)) for cell in row]
         )
         echo(formatted_row)
     echo()  # Línea vacía al final
